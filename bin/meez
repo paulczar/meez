@@ -1,0 +1,50 @@
+#!/usr/bin/env ruby
+# Encoding: utf-8
+
+$LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib')))
+
+require 'optparse'
+require 'meez/meez'
+
+options = {}
+
+opt_parser = OptionParser.new do |opt|
+  opt.banner = 'Usage: meez [options] <cookbook name>'
+  opt.separator  ''
+  opt.separator  'Options'
+  opt.on('-o', '--cookbook-path USERNAME', 'The directory where the cookbook will be created') do |path|
+    options[:path] = path
+  end
+  opt.on('-C', '--copyright COPYRIGHT_HOLDER', 'The  name  of  the  copyright holder.') do |copyright|
+    options[:copyright] = copyright
+  end
+  opt.on('-I', '--license LICENSE', 'The type of license under which a cookbook is distributed: apachev2, gplv2, gplv3, mit, or none (default).') do |license|
+    options[:license] = license
+  end
+  opt.on('-m', '--email EMAIL', 'The  email  address  for the individual who maintains the cookbook.') do |email|
+    options[:email] = email
+  end
+  opt.on('-h', '--help', 'help') do
+    options[:help] = true
+    puts opt_parser
+  end
+end
+
+opt_parser.parse!
+
+cookbook_name = ARGV.pop
+
+unless options[:help]
+  if cookbook_name
+    Meez.init(cookbook_name, options)
+    puts "Cookbook #{cookbook_name} created successfully"
+    puts 'Next steps...'
+    puts "  $ cd #{File.join(options[:path], cookbook_name)}"
+    puts '  $ bundle install'
+    puts '  $ bundle exec berks install'
+    puts '  $ bundle exec strainer test'
+  else
+    puts 'Need to specify a cookbook'
+    puts opt_parser
+  end
+end
