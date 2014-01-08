@@ -1,10 +1,12 @@
 Gem::Specification.new do |s|
   s.name = %q{meez}
-  s.version = '0.0.1'
-  s.date = %q{2014-01-07}
-  s.summary = 'initializes chef cookbook with TDD framework'
+  s.version = '0.0.3'
+  s.date = %q{2014-01-08}
+  s.summary = 'Initializes a chef cookbook with TDD framework'
   s.description = <<EOF
-berkshelf + chefspec + test kitchen + strainer + foodcritic + server spec
+`Meez` (slang for `mise en place`) will create an opinionated chef cookbook skeleton complete with testing suite including:
+    berkshelf, chefspec, test kitchen, strainer, foodcritic, server spec
+
 EOF
   s.files = [
     'lib/meez/meez.rb'

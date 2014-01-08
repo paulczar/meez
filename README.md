@@ -251,10 +251,13 @@ e.g.
 License and Authors
 -------------------
 
-Authors: 
+Authors:
+========
+
 Paul Czarkowski - paul.czarkowski@rackspace.com
 
 License:
+========
 
 Copyright 2014 Paul Czarkowski,  Rackspace Inc.
 
