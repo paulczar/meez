@@ -88,8 +88,8 @@ suites:
   def self.init_chefspec(cookbook_name, options)
     puts '* Initializing Chef Spec'
     path = File.join(options[:path], cookbook_name)
-    spec_path = File.join(path, 'spec')
-    Dir.mkdir(spec_path, 0755)
+    spec_path = File.join(path, 'test', 'unit', 'spec')
+    FileUtils.mkdir_p(spec_path)
     puts "\tCreating #{File.join(spec_path, 'spec_helper.rb')}"
 
     File.open(File.join(spec_path, 'spec_helper.rb'), 'w') do |file|
@@ -97,6 +97,7 @@ suites:
 # Encoding: utf-8
 require 'chefspec'
 require 'chefspec/berkshelf'
+require 'chef/application'
 
 ::LOG_LEVEL = :fatal
 ::UBUNTU_OPTS = {
@@ -123,16 +124,13 @@ at_exit { ChefSpec::Coverage.report! }
 
 require_relative 'spec_helper'
 
-describe '#{cookbook_name}::default' do
+describe 'logstash::default' do
+  before { stub_resources }
   describe 'ubuntu' do
-    before do
-      @chef_run = ::ChefSpec::Runner.new(::UBUNTU_OPTS)
-      stub_resources
-      @chef_run.converge '#{cookbook_name}::default'
-    end
+    let(:chef_run) { ChefSpec::Runner.new.converge(described_recipe) }
 
-    it 'writes some tests' do
-      pending 'or it gets the hose again'
+    it 'writes some chefspec code' do
+      pending 'todo'
     end
 
   end
@@ -143,7 +141,7 @@ end
 
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chefspec', '~> 3.1.4'\n") }
-    File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("chefspec:   bundle exec rspec $SANDBOX/$COOKBOOK/spec\n") }
+    File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("chefspec:   bundle exec rspec $SANDBOX/$COOKBOOK/test/unit/spec\n") }
   end
 
   def self.init_strainer(cookbook_name, options)
