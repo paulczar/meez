@@ -124,7 +124,7 @@ at_exit { ChefSpec::Coverage.report! }
 
 require_relative 'spec_helper'
 
-describe 'logstash::default' do
+describe '#{cookbook_name}::default' do
   before { stub_resources }
   describe 'ubuntu' do
     let(:chef_run) { ChefSpec::Runner.new.converge(described_recipe) }
