@@ -6,6 +6,7 @@ class Meez
   def self.init(cookbook_name, options)
     init_cookbook(cookbook_name, options)
     init_berkshelf(cookbook_name, options)
+    init_vagrant(cookbook_name, options)
     init_strainer(cookbook_name, options)
     init_knife(cookbook_name, options)
     init_rubocop(cookbook_name, options)
@@ -41,6 +42,13 @@ class Meez
     Git.init( path, { repository: path } )
   end
 
+    # Every Vagrant virtual environment requires a box to build off of.
+  #config.vm.box = "<%= berkshelf_config.vagrant.vm.box %>"
+
+  # The url from where the 'config.vm.box' box will be fetched if it
+  # doesn't already exist on the user's system.
+  #config.vm.box_url = "<%= berkshelf_config.vagrant.vm.box_url %>"
+
   def self.init_berkshelf(cookbook_name, options)
     puts '* Initializing Berkshelf'
     path = File.join(options[:path], cookbook_name)
@@ -51,7 +59,8 @@ class Meez
     Berkshelf::InitGenerator.new(
       [path],
       {
-        skip_test_kitchen: true
+        skip_test_kitchen: true,
+        skip_vagrant: true
       }
     ).invoke_all
     File.open(File.join(path, 'Berksfile'), 'a') { |f| f.write("metadata\n") }
@@ -80,6 +89,35 @@ suites:
   - name: default
     run_list: recipe[#{cookbook_name}::default]
     attributes:
+      EOF
+      file.write(contents)
+    end
+  end
+
+  def self.init_vagrant(cookbook_name, options)
+    puts '* Initializing Vagranfile'
+    path = File.join(options[:path], cookbook_name)
+    File.open(File.join(path, 'Vagrantfile'), 'w') do |file|
+      contents = <<-EOF
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure('2') do |config|
+  config.vm.hostname = '#{cookbook_name}'
+  config.vm.box = 'ubuntu-12.04'
+  config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_\#{config.vm.box}_chef-provisionerless.box"
+  config.omnibus.chef_version = 'latest'
+  config.berkshelf.enabled = true
+
+  config.vm.provision :chef_solo do |chef|
+    chef.json = {
+    }
+
+    chef.run_list = [
+        'recipe[#{cookbook_name}::default]'
+    ]
+  end
+end
       EOF
       file.write(contents)
     end
