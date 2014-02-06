@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'chefspec', '~> 3.1.4'
+gem 'chefspec', '~> 3.2'
 gem 'foodcritic', '~> 3.0.0'
 gem 'rubocop', '~> 0.18'
 gem 'chef', '~> 11.8'
