@@ -178,7 +178,7 @@ end
     end
 
     puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chefspec', '~> 3.1.4'\n") }
+    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chefspec', '~> 3.2'\n") }
     File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("chefspec:   bundle exec rspec $SANDBOX/$COOKBOOK/test/unit/spec\n") }
   end
 
@@ -195,7 +195,7 @@ end
     puts '* Initializing Rubocop'
     path = File.join(options[:path], cookbook_name)
     puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'rubocop', '~> 0.16.0'\n") }
+    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'rubocop', '~> 0.18'\n") }
     puts "\tAppend Strainerfile"
     File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("rubocop:    bundle exec rubocop $COOKBOOK\n") }
   end
@@ -204,7 +204,7 @@ end
     puts '* Initializing Knife'
     path = File.join(options[:path], cookbook_name)
     puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chef', '~> 11.8.0'\n") }
+    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chef', '~> 11.8'\n") }
     puts "\tAppend Strainerfile"
     File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("knife test: bundle exec knife cookbook test $COOKBOOK\n") }
   end
