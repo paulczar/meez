@@ -6,7 +6,9 @@ $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib
 require 'optparse'
 require 'meez/meez'
 
-options = {}
+options = {
+  path: './'
+}
 
 opt_parser = OptionParser.new do |opt|
   opt.banner = 'Usage: meez [options] <cookbook name>'
