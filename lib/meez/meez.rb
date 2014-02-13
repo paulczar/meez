@@ -14,7 +14,6 @@ class Meez
     init_chefspec(cookbook_name, options)
     init_serverspec(cookbook_name, options)
     init_kitchenci(cookbook_name, options)
-    #init_rakefile(cookbook_name, options)
     #bundle_install(cookbook_name, options)
   end
 
@@ -177,6 +176,8 @@ end
       file.write(contents)
     end
 
+    puts "\tAppend .gitignore"
+    File.open(File.join(path, '.gitignore'), 'a') { |f| f.write(".coverage/*\n") }
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chefspec', '~> 3.2'\n") }
   end
@@ -212,11 +213,43 @@ task :integration do
   end
 end
 
+require 'rspec/core/rake_task'
+desc 'Run ChefSpec unit tests'
+RSpec::Core::RakeTask.new(:spec) do |t, args|
+  t.rspec_opts = 'test/unit/spec'
+end
+
+desc "Runs knife cookbook test"
+task :knife do
+  Rake::Task[:prepare_sandbox].execute
+  sh "bundle exec knife cookbook test #{cookbook_name} -c test/.chef/knife.rb -o \#{sandbox_path}/../"
+  Rake::Task[:nuke_sandbox].execute
+end
+
+task :prepare_sandbox do
+  files = %w{*.md *.rb attributes definitions files libraries providers recipes resources templates}
+
+  rm_rf sandbox_path
+  mkdir_p sandbox_path
+  cp_r Dir.glob("{\#{files.join(',')}}"), sandbox_path
+end
+
+task :nuke_sandbox do
+  rm_rf sandbox_path
+end
+
+private
+def sandbox_path
+  File.join(%w( / tmp cookbooks #{cookbook_name} ))
+end
+
 # The default rake task should just run it all
-task default: ['style', 'integration']
+task default: ['style', 'knife', 'spec', 'integration']
       EOF
       file.write(contents)
     end
+    puts "\tAppend Gemfile"
+    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'rake'\n") }
   end
 
   def self.init_rubocop(cookbook_name, options)
@@ -231,6 +264,15 @@ task default: ['style', 'integration']
     path = File.join(options[:path], cookbook_name)
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chef', '~> 11.8'\n") }
+    config_path = File.join(path, 'test', '.chef')
+    FileUtils.mkdir_p(config_path)
+    File.open(File.join(config_path, 'knife.rb'), 'w') do |file|
+      contents = <<-EOF
+cache_type 'BasicFile'
+cache_options(:path => "\#{ENV['HOME']}/.chef/checksums")
+      EOF
+      file.write(contents)
+    end
   end
 
   def self.init_foodcritic(cookbook_name, options)
