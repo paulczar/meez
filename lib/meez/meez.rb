@@ -8,12 +8,13 @@ class Meez
     init_berkshelf(cookbook_name, options)
     init_vagrant(cookbook_name, options)
     init_knife(cookbook_name, options)
+    init_rakefile(cookbook_name, options)
     init_rubocop(cookbook_name, options)
     init_foodcritic(cookbook_name, options)
     init_chefspec(cookbook_name, options)
     init_serverspec(cookbook_name, options)
     init_kitchenci(cookbook_name, options)
-    init_rakefile(cookbook_name, options)
+    #init_rakefile(cookbook_name, options)
     #bundle_install(cookbook_name, options)
   end
 
