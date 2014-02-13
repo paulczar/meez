@@ -44,7 +44,6 @@ unless options[:help]
     puts "  $ cd #{File.join(options[:path], cookbook_name)}"
     puts '  $ bundle install'
     puts '  $ bundle exec berks install'
-    puts '  $ bundle exec strainer test'
   else
     puts 'Need to specify a cookbook'
     puts opt_parser
