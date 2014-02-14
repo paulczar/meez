@@ -93,6 +93,7 @@ Using test (0.1.0) from metadata
 rake integration                  # Run Test Kitchen integration tests
 rake kitchen:all                  # Run all test instances
 rake kitchen:default-ubuntu-1204  # Run default-ubuntu-1204 test instance
+rake spec                         # Run ChefSpec unit tests
 rake style                        # Run all style checks
 rake style:chef                   # Lint Chef cookbooks
 rake style:ruby                   # Run Ruby style checks
