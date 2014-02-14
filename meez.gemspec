@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.summary = 'Initializes a chef cookbook with TDD framework'
   s.description = <<EOF
 `Meez` (slang for `mise en place`) will create an opinionated chef cookbook skeleton complete with testing suite including:
-    berkshelf, chefspec, test kitchen, strainer, foodcritic, server spec
+    berkshelf, chefspec, test kitchen, foodcritic, server spec
 
 EOF
   s.files = [

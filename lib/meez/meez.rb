@@ -7,8 +7,8 @@ class Meez
     init_cookbook(cookbook_name, options)
     init_berkshelf(cookbook_name, options)
     init_vagrant(cookbook_name, options)
-    init_strainer(cookbook_name, options)
     init_knife(cookbook_name, options)
+    init_rakefile(cookbook_name, options)
     init_rubocop(cookbook_name, options)
     init_foodcritic(cookbook_name, options)
     init_chefspec(cookbook_name, options)
@@ -72,7 +72,6 @@ class Meez
     require 'kitchen'
     require 'kitchen/generator/init'
     Kitchen::Generator::Init.new([], {}, destination_root: path).invoke_all
-    File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("kitchen:   bundle exec kitchen test --destroy=always\n") }
     File.open(File.join(path, '.kitchen.yml'), 'w') do |file|
       contents = <<-EOF
 ---
@@ -177,18 +176,56 @@ end
       file.write(contents)
     end
 
+    puts "\tAppend .gitignore"
+    File.open(File.join(path, '.gitignore'), 'a') { |f| f.write(".coverage/*\n") }
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chefspec', '~> 3.2'\n") }
-    File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("chefspec:   bundle exec rspec $SANDBOX/$COOKBOOK/test/unit/spec\n") }
   end
 
-  def self.init_strainer(cookbook_name, options)
-    puts '* Initializing Strainer'
+  def self.init_rakefile(cookbook_name, options)
+    puts '* Initializing Rakefile'
     path = File.join(options[:path], cookbook_name)
-    puts "\tCreating #{File.join(path, 'Strainerfile')}"
-    File.open(File.join(path, 'Strainerfile'), 'w') { |f| f.write("# Strainerfile\n") }
+    puts "\t Creating #{File.join(path, 'Rakefile')}"
+    File.open(File.join(path, 'Rakefile'), 'w') do |file|
+      contents = <<-EOF
+# Encoding: utf-8
+require 'bundler/setup'
+
+namespace :style do
+  require 'rubocop/rake_task'
+  desc 'Run Ruby style checks'
+  Rubocop::RakeTask.new(:ruby)
+
+  require 'foodcritic'
+  desc 'Run Chef style checks'
+  FoodCritic::Rake::LintTask.new(:chef)
+end
+
+desc 'Run all style checks'
+task style: ['style:chef', 'style:ruby']
+
+require 'kitchen'
+desc 'Run Test Kitchen integration tests'
+task :integration do
+  Kitchen.logger = Kitchen.default_file_logger
+  Kitchen::Config.new.instances.each do |instance|
+    instance.test(:always)
+  end
+end
+
+require 'rspec/core/rake_task'
+desc 'Run ChefSpec unit tests'
+RSpec::Core::RakeTask.new(:spec) do |t, args|
+  t.rspec_opts = 'test/unit/spec'
+end
+
+# The default rake task should just run it all
+task default: ['style', 'spec', 'integration']
+      EOF
+      file.write(contents)
+    end
     puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'strainer', '~> 3.3.0'\n") }
+    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'rake'\n") }
   end
 
   def self.init_rubocop(cookbook_name, options)
@@ -196,8 +233,6 @@ end
     path = File.join(options[:path], cookbook_name)
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'rubocop', '~> 0.18'\n") }
-    puts "\tAppend Strainerfile"
-    File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("rubocop:    bundle exec rubocop $COOKBOOK\n") }
   end
 
   def self.init_knife(cookbook_name, options)
@@ -205,8 +240,6 @@ end
     path = File.join(options[:path], cookbook_name)
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chef', '~> 11.8'\n") }
-    puts "\tAppend Strainerfile"
-    File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("knife test: bundle exec knife cookbook test $COOKBOOK\n") }
   end
 
   def self.init_foodcritic(cookbook_name, options)
@@ -214,8 +247,6 @@ end
     path = File.join(options[:path], cookbook_name)
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'foodcritic', '~> 3.0.0'\n") }
-    puts "\tAppend Strainerfile"
-    File.open(File.join(path, 'Strainerfile'), 'a') { |f| f.write("foodcritic: bundle exec foodcritic -f any $SANDBOX/$COOKBOOK\n") }
   end
 
   def self.init_serverspec(cookbook_name, options)
