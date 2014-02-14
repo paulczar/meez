@@ -177,6 +177,8 @@ end
       file.write(contents)
     end
 
+    puts "\tAppend .gitignore"
+    File.open(File.join(path, '.gitignore'), 'a') { |f| f.write(".coverage/*\n") }
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chefspec', '~> 3.2'\n") }
   end
