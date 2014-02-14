@@ -14,7 +14,6 @@ class Meez
     init_chefspec(cookbook_name, options)
     init_serverspec(cookbook_name, options)
     init_kitchenci(cookbook_name, options)
-    #init_rakefile(cookbook_name, options)
     #bundle_install(cookbook_name, options)
   end
 
@@ -225,6 +224,8 @@ task default: ['style', 'spec', 'integration']
       EOF
       file.write(contents)
     end
+    puts "\tAppend Gemfile"
+    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'rake'\n") }
   end
 
   def self.init_rubocop(cookbook_name, options)
