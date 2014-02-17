@@ -219,32 +219,8 @@ RSpec::Core::RakeTask.new(:spec) do |t, args|
   t.rspec_opts = 'test/unit/spec'
 end
 
-desc "Runs knife cookbook test"
-task :knife do
-  Rake::Task[:prepare_sandbox].execute
-  sh "bundle exec knife cookbook test #{cookbook_name} -c test/.chef/knife.rb -o \#{sandbox_path}/../"
-  Rake::Task[:nuke_sandbox].execute
-end
-
-task :prepare_sandbox do
-  files = %w{*.md *.rb attributes definitions files libraries providers recipes resources templates}
-
-  rm_rf sandbox_path
-  mkdir_p sandbox_path
-  cp_r Dir.glob("{\#{files.join(',')}}"), sandbox_path
-end
-
-task :nuke_sandbox do
-  rm_rf sandbox_path
-end
-
-private
-def sandbox_path
-  File.join(%w( / tmp cookbooks #{cookbook_name} ))
-end
-
 # The default rake task should just run it all
-task default: ['style', 'knife', 'spec', 'integration']
+task default: ['style', 'spec', 'integration']
       EOF
       file.write(contents)
     end
@@ -264,15 +240,6 @@ task default: ['style', 'knife', 'spec', 'integration']
     path = File.join(options[:path], cookbook_name)
     puts "\tAppend Gemfile"
     File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chef', '~> 11.8'\n") }
-    config_path = File.join(path, 'test', '.chef')
-    FileUtils.mkdir_p(config_path)
-    File.open(File.join(config_path, 'knife.rb'), 'w') do |file|
-      contents = <<-EOF
-cache_type 'BasicFile'
-cache_options(:path => "\#{ENV['HOME']}/.chef/checksums")
-      EOF
-      file.write(contents)
-    end
   end
 
   def self.init_foodcritic(cookbook_name, options)

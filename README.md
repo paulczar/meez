@@ -32,7 +32,7 @@ Options
 ### Example
 
 ```
-meez --cookbook-path /tmp --copyright Foo -I apachev2 -m foo@bah.com test
+$ meez --cookbook-path /tmp --copyright Foo -I apachev2 -m foo@bah.com test
 * Initializing Cookbook
 ** Creating cookbook test
 ** Creating README for cookbook: test
@@ -79,17 +79,17 @@ Next steps...
   $ bundle install
   $ bundle exec berks install
 
-➜  cd /tmp/test
-➜  bundle install
+$ cd /tmp/test
+$ bundle install
 Fetching gem metadata from https://rubygems.org/
 Fetching additional metadata from https://rubygems.org/
 Resolving dependencies...
 ...
 ...
 Your bundle is complete!
-➜  bundle exec berks install
+$ bundle exec berks install
 Using test (0.1.0) from metadata
-➜  bundle exec rake -T
+$ bundle exec rake -T
 rake integration                  # Run Test Kitchen integration tests
 rake kitchen:all                  # Run all test instances
 rake kitchen:default-ubuntu-1204  # Run default-ubuntu-1204 test instance
