@@ -6,4 +6,5 @@ gem 'rubocop', '~> 0.18'
 gem 'chef', '~> 11.8'
 gem 'berkshelf', '~> 2.0'
 gem 'test-kitchen', '~> 1.1'
-
+gem 'serverspec', '~> 0.14.2'
+gem 'rake'
