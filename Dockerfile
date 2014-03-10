@@ -6,4 +6,4 @@ RUN gem install bundler
 
 ADD Gemfile /source/Gemfile
 
-RUN cd /source && bundle install --system
+RUN cd /source && bundle install
