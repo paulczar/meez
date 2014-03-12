@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{meez}
-  s.version = '0.1.1'
+  s.version = '0.1.2'
   s.date = %q{2014-01-08}
   s.summary = 'Initializes a chef cookbook with TDD framework'
   s.description = <<EOF
@@ -8,12 +8,9 @@ Gem::Specification.new do |s|
     berkshelf, chefspec, test kitchen, foodcritic, server spec
 
 EOF
-  s.files = [
-    'lib/meez/meez.rb'
-  ]
-  s.executables = [
-    'meez'
-  ]
+  s.files = %x{git ls-files}.split("\n")
+
+  s.executables = ['meez']
   s.authors = ['Paul Czarkowski']
   s.email   = 'paul.czarkowski@rackspace.com'
   s.homepage = 'http://github.com/paulczar/meez'

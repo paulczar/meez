@@ -14,7 +14,33 @@ class Meez
     init_chefspec(cookbook_name, options)
     init_serverspec(cookbook_name, options)
     init_kitchenci(cookbook_name, options)
-    #bundle_install(cookbook_name, options)
+    ##bundle_install(cookbook_name, options)
+  end
+
+  def self.write_template(name, path, cookbook_name, options) 
+    require 'erb'
+    template = File.join(File.dirname(__FILE__), "../../templates", name)
+    target = File.join(path, File.basename(name, '.erb'))
+    puts "\tCreating #{target} from template"
+    content = ERB.new File.new(template).read
+    File.open(target, 'w') { |f| f.write(content.result(binding)) }
+  end
+
+  def self.append_file(file, content)
+    File.open(file, 'a') { |f| f.write("#{content}\n") }
+  end
+
+  def self.add_gem(cookbook_path, name, version=nil)
+    puts "adding #{name} gem to Gemfile"
+    if version
+      append_file(File.join(cookbook_path, 'Gemfile'), "gem '#{name}', '#{version}'" )
+    else
+      append_file(File.join(cookbook_path, 'Gemfile'), "gem '#{name}'" )
+    end
+  end
+
+  def self.gitignore(cookbook_path, file)
+    append_file(File.join(cookbook_path, '.gitignore'), file)
   end
 
   def self.init_cookbook(cookbook_name, options)
@@ -63,7 +89,7 @@ class Meez
         skip_vagrant: true
       }
     ).invoke_all
-    File.open(File.join(path, 'Berksfile'), 'a') { |f| f.write("metadata\n") }
+    append_file(File.join(path, 'Berksfile'), "metadata")
   end
 
   def self.init_kitchenci(cookbook_name, options)
@@ -72,54 +98,13 @@ class Meez
     require 'kitchen'
     require 'kitchen/generator/init'
     Kitchen::Generator::Init.new([], {}, destination_root: path).invoke_all
-    File.open(File.join(path, '.kitchen.yml'), 'w') do |file|
-      contents = <<-EOF
----
-driver:
-  name: vagrant
-
-provisioner:
-  name: chef_solo
-
-platforms:
-  - name: ubuntu-12.04
-
-suites:
-  - name: default
-    run_list: recipe[#{cookbook_name}::default]
-    attributes:
-      EOF
-      file.write(contents)
-    end
+    write_template('.kitchen.yml.erb', path, cookbook_name, options) 
   end
 
   def self.init_vagrant(cookbook_name, options)
     puts '* Initializing Vagranfile'
     path = File.join(options[:path], cookbook_name)
-    File.open(File.join(path, 'Vagrantfile'), 'w') do |file|
-      contents = <<-EOF
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
-Vagrant.configure('2') do |config|
-  config.vm.hostname = '#{cookbook_name}'
-  config.vm.box = 'ubuntu-12.04'
-  config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_\#{config.vm.box}_chef-provisionerless.box"
-  config.omnibus.chef_version = 'latest'
-  config.berkshelf.enabled = true
-
-  config.vm.provision :chef_solo do |chef|
-    chef.json = {
-    }
-
-    chef.run_list = [
-        'recipe[#{cookbook_name}::default]'
-    ]
-  end
-end
-      EOF
-      file.write(contents)
-    end
+    write_template('Vagrantfile.erb', path, cookbook_name, options) 
   end
 
   def self.init_chefspec(cookbook_name, options)
@@ -127,126 +112,35 @@ end
     path = File.join(options[:path], cookbook_name)
     spec_path = File.join(path, 'test', 'unit', 'spec')
     FileUtils.mkdir_p(spec_path)
-    puts "\tCreating #{File.join(spec_path, 'spec_helper.rb')}"
-
-    File.open(File.join(spec_path, 'spec_helper.rb'), 'w') do |file|
-      contents = <<-EOF
-# Encoding: utf-8
-require 'chefspec'
-require 'chefspec/berkshelf'
-require 'chef/application'
-
-::LOG_LEVEL = :fatal
-::UBUNTU_OPTS = {
-  platform: 'ubuntu',
-  version: '12.04',
-  log_level: ::LOG_LEVEL
-}
-::CHEFSPEC_OPTS = {
-  log_level: ::LOG_LEVEL
-}
-
-def stub_resources
-end
-
-at_exit { ChefSpec::Coverage.report! }
-      EOF
-      file.write(contents)
-    end
-
-    puts "\tCreating #{File.join(spec_path, 'default_spec.rb')}"
-    File.open(File.join(spec_path, 'default_spec.rb'), 'w') do |file|
-      contents = <<-EOF
-# Encoding: utf-8
-
-require_relative 'spec_helper'
-
-describe '#{cookbook_name}::default' do
-  before { stub_resources }
-  describe 'ubuntu' do
-    let(:chef_run) { ChefSpec::Runner.new.converge(described_recipe) }
-
-    it 'writes some chefspec code' do
-      pending 'todo'
-    end
-
-  end
-end
-      EOF
-      file.write(contents)
-    end
-
-    puts "\tAppend .gitignore"
-    File.open(File.join(path, '.gitignore'), 'a') { |f| f.write(".coverage/*\n") }
-    puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chefspec', '~> 3.2'\n") }
+    write_template('chefspec/spec_helper.rb.erb', spec_path, cookbook_name, options)
+    write_template('chefspec/default_spec.rb.erb', spec_path, cookbook_name, options)
+    gitignore(path, '.coverage/*')
+    add_gem(path, 'chefspec', '~> 3.2')
   end
 
   def self.init_rakefile(cookbook_name, options)
     puts '* Initializing Rakefile'
     path = File.join(options[:path], cookbook_name)
-    puts "\t Creating #{File.join(path, 'Rakefile')}"
-    File.open(File.join(path, 'Rakefile'), 'w') do |file|
-      contents = <<-EOF
-# Encoding: utf-8
-require 'bundler/setup'
-
-namespace :style do
-  require 'rubocop/rake_task'
-  desc 'Run Ruby style checks'
-  Rubocop::RakeTask.new(:ruby)
-
-  require 'foodcritic'
-  desc 'Run Chef style checks'
-  FoodCritic::Rake::LintTask.new(:chef)
-end
-
-desc 'Run all style checks'
-task style: ['style:chef', 'style:ruby']
-
-require 'kitchen'
-desc 'Run Test Kitchen integration tests'
-task :integration do
-  Kitchen.logger = Kitchen.default_file_logger
-  Kitchen::Config.new.instances.each do |instance|
-    instance.test(:always)
-  end
-end
-
-require 'rspec/core/rake_task'
-desc 'Run ChefSpec unit tests'
-RSpec::Core::RakeTask.new(:spec) do |t, args|
-  t.rspec_opts = 'test/unit/spec'
-end
-
-# The default rake task should just run it all
-task default: ['style', 'spec', 'integration']
-      EOF
-      file.write(contents)
-    end
-    puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'rake'\n") }
+    write_template('Rakefile.erb', path, cookbook_name, options)
+    add_gem(path, 'rake')
   end
 
   def self.init_rubocop(cookbook_name, options)
     puts '* Initializing Rubocop'
     path = File.join(options[:path], cookbook_name)
-    puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'rubocop', '~> 0.18'\n") }
+    add_gem(path, 'rubocop', '~> 0.18')
   end
 
   def self.init_knife(cookbook_name, options)
     puts '* Initializing Knife'
     path = File.join(options[:path], cookbook_name)
-    puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'chef', '~> 11.8'\n") }
+    add_gem(path, 'chef', '~> 11.8')
   end
 
   def self.init_foodcritic(cookbook_name, options)
     puts '* Initializing Food Critic'
     path = File.join(options[:path], cookbook_name)
-    puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'foodcritic', '~> 3.0.0'\n") }
+    add_gem(path, 'foodcritic', '~> 3.0')
   end
 
   def self.init_serverspec(cookbook_name, options)
@@ -254,41 +148,9 @@ task default: ['style', 'spec', 'integration']
     path = File.join(options[:path], cookbook_name)
     spec_path = File.join(path, 'test', 'integration', 'default', 'serverspec')
     FileUtils.mkdir_p(spec_path)
-    puts "\t Creating #{File.join(spec_path, 'spec_helper.rb')}"
-
-    File.open(File.join(spec_path, 'spec_helper.rb'), 'w') do |file|
-      contents = <<-EOF
-# Encoding: utf-8
-require 'serverspec'
-
-include Serverspec::Helper::Exec
-include Serverspec::Helper::DetectOS
-
-RSpec.configure do |c|
-  c.before :all do
-    c.path = '/sbin:/usr/bin'
-  end
-end
-      EOF
-      file.write(contents)
-    end
-
-    puts "\tCreating #{File.join(spec_path, 'default_spec.rb')}"
-    File.open(File.join(spec_path, 'default_spec.rb'), 'w') do |file|
-      contents = <<-EOF
-# Encoding: utf-8
-
-require_relative 'spec_helper'
-
-describe 'default' do
-  it { pending 'write some tests' }
-end
-      EOF
-      file.write(contents)
-    end
-
-    puts "\tAppend Gemfile"
-    File.open(File.join(path, 'Gemfile'), 'a') { |f| f.write("gem 'serverspec', '~> 0.14.2'\n") }
+    write_template('serverspec/spec_helper.rb.erb', spec_path, cookbook_name, options)
+    write_template('serverspec/default_spec.rb.erb', spec_path, cookbook_name, options)
+    add_gem(path, 'serverspec', '~> 0.14')
   end
 
   def self.bundle_install(cookbook_name, options)
@@ -298,4 +160,5 @@ end
     puts "\t append .gitignore"
     Bundler.with_clean_env { exec({ 'BUNDLE_GEMFILE' => '/tmp/test/Gemfile' }, 'bundle install') }
   end
+
 end
