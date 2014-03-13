@@ -1,0 +1,11 @@
+image: paulczar/meez
+env:
+  - CI=drone
+script:
+  - bundle install
+  - bundle exec berks install
+  - bundle exec rake style spec
+notify:
+  email:
+  recipients:
+    - paul.czarkowski@rackspace.com

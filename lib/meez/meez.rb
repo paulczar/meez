@@ -15,6 +15,7 @@ class Meez
     init_serverspec(cookbook_name, options)
     init_kitchenci(cookbook_name, options)
     init_guard(cookbook_name, options)
+    init_drone(cookbook_name, options)
   end
 
   def self.write_template(name, path, cookbook_name, options)
@@ -145,11 +146,17 @@ class Meez
   end
 
   def self.init_guard(cookbook_name, options)
-    puts '* Initializing Guard Spec'
+    puts '* Initializing Guard'
     path = File.join(options[:path], cookbook_name)
     write_template('Guardfile.erb', path, cookbook_name, options)
     add_gem(path, 'guard', '~> 1.8')
     add_gem(path, 'guard-rubocop', '~> 0.2')
+  end
+
+  def self.init_drone(cookbook_name, options)
+    puts '* Initializing Drone'
+    path = File.join(options[:path], cookbook_name)
+    write_template('.drone.yml.erb', path, cookbook_name, options)
   end
 
   def self.bundle_install(cookbook_name, options)
