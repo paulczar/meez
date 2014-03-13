@@ -151,6 +151,7 @@ class Meez
     write_template('Guardfile.erb', path, cookbook_name, options)
     add_gem(path, 'guard', '~> 1.8')
     add_gem(path, 'guard-rubocop', '~> 0.2')
+    add_gem(path, 'guard-foodcritic', '~> 1.0.2')
   end
 
   def self.init_drone(cookbook_name, options)
