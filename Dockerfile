@@ -8,6 +8,6 @@ RUN wget -q -O /tmp/vagrant.deb http://files.vagrantup.com/packages/a40522f5fabc
 	&& dpkg -i /tmp/vagrant.deb \
 	&& rm /tmp/vagrant.deb 
 
-ADD Gemfile /source/Gemfile
+#ADD Gemfile /source/Gemfile
 
-RUN cd /source && bundle install
+#RUN cd /source && bundle install

@@ -14,12 +14,12 @@ class Meez
     init_chefspec(cookbook_name, options)
     init_serverspec(cookbook_name, options)
     init_kitchenci(cookbook_name, options)
-    ##bundle_install(cookbook_name, options)
+    init_guard(cookbook_name, options)
   end
 
-  def self.write_template(name, path, cookbook_name, options) 
+  def self.write_template(name, path, cookbook_name, options)
     require 'erb'
-    template = File.join(File.dirname(__FILE__), "../../templates", name)
+    template = File.join(File.dirname(__FILE__), '../../templates', name)
     target = File.join(path, File.basename(name, '.erb'))
     puts "\tCreating #{target} from template"
     content = ERB.new File.new(template).read
@@ -30,12 +30,12 @@ class Meez
     File.open(file, 'a') { |f| f.write("#{content}\n") }
   end
 
-  def self.add_gem(cookbook_path, name, version=nil)
+  def self.add_gem(cookbook_path, name, version = nil)
     puts "adding #{name} gem to Gemfile"
     if version
-      append_file(File.join(cookbook_path, 'Gemfile'), "gem '#{name}', '#{version}'" )
+      append_file(File.join(cookbook_path, 'Gemfile'), "gem '#{name}', '#{version}'")
     else
-      append_file(File.join(cookbook_path, 'Gemfile'), "gem '#{name}'" )
+      append_file(File.join(cookbook_path, 'Gemfile'), "gem '#{name}'")
     end
   end
 
@@ -65,15 +65,8 @@ class Meez
     puts '* Initializing GIT repo'
     path = File.join(options[:path], cookbook_name)
     require 'git'
-    Git.init( path, { repository: path } )
+    Git.init(path, repository: path)
   end
-
-    # Every Vagrant virtual environment requires a box to build off of.
-  #config.vm.box = "<%= berkshelf_config.vagrant.vm.box %>"
-
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
-  #config.vm.box_url = "<%= berkshelf_config.vagrant.vm.box_url %>"
 
   def self.init_berkshelf(cookbook_name, options)
     puts '* Initializing Berkshelf'
@@ -84,12 +77,10 @@ class Meez
     require 'berkshelf/init_generator'
     Berkshelf::InitGenerator.new(
       [path],
-      {
-        skip_test_kitchen: true,
-        skip_vagrant: true
-      }
+      skip_test_kitchen: true,
+      skip_vagrant: true
     ).invoke_all
-    append_file(File.join(path, 'Berksfile'), "metadata")
+    append_file(File.join(path, 'Berksfile'), 'metadata')
   end
 
   def self.init_kitchenci(cookbook_name, options)
@@ -98,13 +89,13 @@ class Meez
     require 'kitchen'
     require 'kitchen/generator/init'
     Kitchen::Generator::Init.new([], {}, destination_root: path).invoke_all
-    write_template('.kitchen.yml.erb', path, cookbook_name, options) 
+    write_template('.kitchen.yml.erb', path, cookbook_name, options)
   end
 
   def self.init_vagrant(cookbook_name, options)
     puts '* Initializing Vagranfile'
     path = File.join(options[:path], cookbook_name)
-    write_template('Vagrantfile.erb', path, cookbook_name, options) 
+    write_template('Vagrantfile.erb', path, cookbook_name, options)
   end
 
   def self.init_chefspec(cookbook_name, options)
@@ -153,12 +144,19 @@ class Meez
     add_gem(path, 'serverspec', '~> 0.14')
   end
 
+  def self.init_guard(cookbook_name, options)
+    puts '* Initializing Guard Spec'
+    path = File.join(options[:path], cookbook_name)
+    write_template('Guardfile.erb', path, cookbook_name, options)
+    add_gem(path, 'guard', '~> 1.8')
+    add_gem(path, 'guard-rubocop', '~> 0.2')
+  end
+
   def self.bundle_install(cookbook_name, options)
     require 'bundler'
     puts '* Running bundle install'
     path = File.join(options[:path], cookbook_name)
     puts "\t append .gitignore"
-    Bundler.with_clean_env { exec({ 'BUNDLE_GEMFILE' => '/tmp/test/Gemfile' }, 'bundle install') }
+    Bundler.with_clean_env { exec({ 'BUNDLE_GEMFILE' => "#{path}/Gemfile" }, 'bundle install') }
   end
-
 end
