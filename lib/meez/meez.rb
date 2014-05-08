@@ -72,7 +72,7 @@ class Meez
   def self.init_berkshelf(cookbook_name, options)
     puts '* Initializing Berkshelf'
     path = File.join(options[:path], cookbook_name)
-    gem 'berkshelf', '~> 2.0.11'
+    gem 'berkshelf', '~> 3.1'
     require 'berkshelf'
     require 'berkshelf/base_generator'
     require 'berkshelf/init_generator'
@@ -81,7 +81,6 @@ class Meez
       skip_test_kitchen: true,
       skip_vagrant: true
     ).invoke_all
-    append_file(File.join(path, 'Berksfile'), 'metadata')
   end
 
   def self.init_kitchenci(cookbook_name, options)
