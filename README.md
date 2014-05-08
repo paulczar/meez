@@ -13,7 +13,20 @@ About
 Install
 =======
 
-`gem install meez`
+Official
+----------
+
+as of version `0.2.0` this is offered as a `chefdk` plugin.
+
+`knife gem install meez`
+
+Unofficial
+-------------
+
+Your results may vary using it outside of `chefdk`
+
+`knife gem install meez`
+
 
 Usage
 =====

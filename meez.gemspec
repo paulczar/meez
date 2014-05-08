@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{meez}
-  s.version = '0.1.5'
+  s.version = '0.2.0'
   s.date = %q{2014-01-08}
   s.summary = 'Initializes a chef cookbook with TDD framework'
   s.description = <<EOF
@@ -16,8 +16,8 @@ EOF
   s.homepage = 'http://github.com/paulczar/meez'
   s.license = 'apache2'
   s.require_paths = ['lib']
-  s.add_dependency 'chef', '~> 11.8.0'
-  s.add_dependency 'test-kitchen', '~> 1.1.1'
-  s.add_dependency 'bundler', '~> 1.5.1'
-  s.add_dependency 'berkshelf', '~> 2.0.12'
+  s.add_dependency 'chef', '> 11.8'
+  s.add_dependency 'test-kitchen', '~> 1.2'
+  s.add_dependency 'bundler', '~> 1.5'
+  s.add_dependency 'berkshelf', '~> 3.1'
 end
