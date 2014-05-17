@@ -91,6 +91,7 @@ class Meez
     require 'kitchen'
     require 'kitchen/generator/init'
     Kitchen::Generator::Init.new([], {}, destination_root: path).invoke_all
+    options[:driver] ||= "vagrant"
     write_template('.kitchen.yml.erb', path, cookbook_name, options)
   end
 

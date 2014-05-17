@@ -17,6 +17,10 @@ group :development do
   gem 'guard-rubocop', '~> 1.1'
 end
 
+group :docker do
+  gem "kitchen-docker"
+end
+
 #group :infinite_loop_solver do
 #  gem 'celluloid', '~> 0.14'
 #  gem 'celluloid-io', '~> 0.14'

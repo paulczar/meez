@@ -1,7 +1,9 @@
 ---
 driver:
-  name: vagrant
-
+  <% case options[:driver] when "vagrant" %>name: vagrant
+  <% when "docker" %>name: docker
+  provision_command: curl -L http://www.opscode.com/chef/install.sh | bash
+  <% end %>
 provisioner:
   name: chef_solo
 

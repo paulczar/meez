@@ -39,6 +39,7 @@ Options
     -C, --copyright COPYRIGHT_HOLDER The  name  of  the  copyright holder.
     -I, --license LICENSE            The type of license under which a cookbook is distributed: apachev2, gplv2, gplv3, mit, or none (default).
     -m, --email EMAIL                The  email  address  for the individual who maintains the cookbook.
+    -d, --kitchen-driver DRIVER      The driver which use test-kitchen for creating platform instances: vagrant (default), docker
     -h, --help                       help
 ```
 

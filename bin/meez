@@ -26,6 +26,9 @@ opt_parser = OptionParser.new do |opt|
   opt.on('-m', '--email EMAIL', 'The  email  address  for the individual who maintains the cookbook.') do |email|
     options[:email] = email
   end
+  opt.on('-d', '--kitchen-driver DRIVER', 'The driver which use test-kitchen for creating platform instances: vagrant (default), docker') do |driver|
+    options[:driver] = driver
+  end
   opt.on('-h', '--help', 'help') do
     options[:help] = true
     puts opt_parser
