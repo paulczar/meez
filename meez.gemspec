@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{meez}
-  s.version = '0.2.0'
+  s.version = '0.2.1'
   s.date = %q{2014-01-08}
   s.summary = 'Initializes a chef cookbook with TDD framework'
   s.description = <<EOF

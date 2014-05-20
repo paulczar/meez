@@ -123,6 +123,7 @@ class Meez
   def self.init_rubocop(cookbook_name, options)
     puts '* Initializing Rubocop'
     path = File.join(options[:path], cookbook_name)
+    write_template('.rubocop.yml.erb', path, cookbook_name, options)
     add_gem(path, 'rubocop', '>= 0.21')
   end
 
