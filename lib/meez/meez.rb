@@ -91,7 +91,9 @@ class Meez
     require 'kitchen'
     require 'kitchen/generator/init'
     Kitchen::Generator::Init.new([], {}, destination_root: path).invoke_all
+    options[:driver] ||= "vagrant"
     write_template('.kitchen.yml.erb', path, cookbook_name, options)
+    add_gem(path, 'kitchen-docker', '>=0.15.0') if options[:driver].eql? "docker"
   end
 
   def self.init_vagrant(cookbook_name, options)
