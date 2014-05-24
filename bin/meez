@@ -33,18 +33,23 @@ opt_parser = OptionParser.new do |opt|
     options[:help] = true
     puts opt_parser
   end
+  opt.on('-v', '--version', 'version') do
+    options[:version] = true
+    puts 'meez version 0.2.2'
+  end
 end
 
 opt_parser.parse!
 
 cookbook_name = ARGV.pop
 
-unless options[:help]
+unless options[:help] || options[:version]
   if cookbook_name
     Meez.init(cookbook_name, options)
     puts "Cookbook #{cookbook_name} created successfully"
     puts 'Next steps...'
     puts "  $ cd #{File.join(options[:path], cookbook_name)}"
+    puts '  $ export USE_SYSTEM_GECODE=1'
     puts '  $ bundle install'
     puts '  $ bundle exec berks install'
     puts '  $ bundle exec rake'

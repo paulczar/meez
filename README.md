@@ -13,19 +13,21 @@ About
 Install
 =======
 
+Setting the environment variable `USE_SYSTEM_GECODE=1` will help speed up builds by using the system `gecode` rather than compiling it from scratch.
+
 Official
 ----------
 
 as of version `0.2.0` this is offered as a `chefdk` plugin.
 
-`knife gem install meez`
+`chef gem install meez`
 
 Unofficial
 -------------
 
 Your results may vary using it outside of `chefdk`
 
-`knife gem install meez`
+`gem install meez`
 
 
 Usage
@@ -90,10 +92,12 @@ You must run `bundle install' to fetch any new gems.
 Cookbook test created successfully
 Next steps...
   $ cd /tmp/test
+  $ export USE_SYSTEM_GECODE=1
   $ bundle install
   $ bundle exec berks install
 
 $ cd /tmp/test
+$ export USE_SYSTEM_GECODE=1
 $ bundle install
 Fetching gem metadata from https://rubygems.org/
 Fetching additional metadata from https://rubygems.org/

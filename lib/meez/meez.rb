@@ -16,6 +16,7 @@ class Meez
     init_kitchenci(cookbook_name, options)
     init_guard(cookbook_name, options)
     init_drone(cookbook_name, options)
+    init_docker(cookbook_name, options)
   end
 
   def self.write_template(name, path, cookbook_name, options)
@@ -162,6 +163,12 @@ class Meez
     puts '* Initializing Drone'
     path = File.join(options[:path], cookbook_name)
     write_template('.drone.yml.erb', path, cookbook_name, options)
+  end
+
+  def self.init_docker(cookbook_name, options)
+    puts '* Initializing Docker'
+    path = File.join(options[:path], cookbook_name)
+    write_template('Dockerfile.erb', path, cookbook_name, options)
   end
 
   def self.bundle_install(cookbook_name, options)
