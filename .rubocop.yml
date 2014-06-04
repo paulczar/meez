@@ -8,3 +8,6 @@ MethodLength:
 
 ClassLength:
   Max: 200
+
+UnusedMethodArgument:
+  Enabled: false

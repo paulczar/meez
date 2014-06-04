@@ -12,8 +12,8 @@ options = {
 
 opt_parser = OptionParser.new do |opt|
   opt.banner = 'Usage: meez [options] <cookbook name>'
-  opt.separator  ''
-  opt.separator  'Options'
+  opt.separator ''
+  opt.separator 'Options'
   opt.on('-o', '--cookbook-path PATH', 'The directory where the cookbook will be created') do |path|
     options[:path] = path
   end

@@ -56,7 +56,7 @@ class Meez
     create_cookbook.config[:cookbook_license]   = options[:license]   || 'YOUR_EMAIL'
     create_cookbook.config[:cookbook_email]     = options[:email]     || 'none'
     create_cookbook.run
-    %w{ metadata.rb recipes/default.rb }.each do |file|
+    %w(metadata.rb recipes/default.rb).each do |file|
       puts "\tRewriting #{file}"
       contents = "# Encoding: utf-8\n#{File.read(File.join(path, file))}"
       File.open(File.join(path, file), 'w') { |f| f.write(contents) }
@@ -82,7 +82,7 @@ class Meez
       skip_vagrant: true
     ).invoke_all
     contents = File.read(File.join(path, 'Gemfile'))
-    newgemfile = contents.gsub("\ngem 'berkshelf'\n","\ngem 'berkshelf', '> 3'\n")
+    newgemfile = contents.gsub("\ngem 'berkshelf'\n", "\ngem 'berkshelf', '> 3'\n")
     File.open(File.join(path, 'Gemfile'), 'w') { |f| f.write(newgemfile) }
   end
 
@@ -92,9 +92,9 @@ class Meez
     require 'kitchen'
     require 'kitchen/generator/init'
     Kitchen::Generator::Init.new([], {}, destination_root: path).invoke_all
-    options[:driver] ||= "vagrant"
+    options[:driver] ||= 'vagrant'
     write_template('.kitchen.yml.erb', path, cookbook_name, options)
-    add_gem(path, 'kitchen-docker', '>=0.15.0') if options[:driver].eql? "docker"
+    add_gem(path, 'kitchen-docker', '>=0.15.0') if options[:driver].eql? 'docker'
   end
 
   def self.init_vagrant(cookbook_name, options)
@@ -125,7 +125,7 @@ class Meez
     puts '* Initializing Rubocop'
     path = File.join(options[:path], cookbook_name)
     write_template('.rubocop.yml.erb', path, cookbook_name, options)
-    add_gem(path, 'rubocop', '>= 0.21')
+    add_gem(path, 'rubocop', '>= 0.23')
   end
 
   def self.init_knife(cookbook_name, options)
