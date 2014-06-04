@@ -125,7 +125,7 @@ class Meez
     puts '* Initializing Rubocop'
     path = File.join(options[:path], cookbook_name)
     write_template('.rubocop.yml.erb', path, cookbook_name, options)
-    add_gem(path, 'rubocop', '>= 0.23')
+    add_gem(path, 'rubocop', '= 0.23')
   end
 
   def self.init_knife(cookbook_name, options)
