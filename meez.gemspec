@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q(meez)
-  s.version = '0.2.4'
+  s.version = '0.2.5'
   s.date = %q(2014-01-08)
   s.summary = 'Initializes a chef cookbook with TDD framework'
   s.description = <<EOF
@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
     berkshelf, chefspec, test kitchen, foodcritic, server spec
 
 EOF
-  s.files = %x(`git ls-files`).split("\n")
+  s.files = %x(git ls-files).split("\n")
 
   s.executables = ['meez']
   s.authors = ['Paul Czarkowski']
