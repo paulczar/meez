@@ -8,7 +8,7 @@ About
 
 `Mise en place` is a French phrase which means "putting in place", as in set up. It is used in professional kitchens to refer to organizing and arranging the ingredients (e.g., cuts of meat, relishes, sauces, par-cooked items, spices, freshly chopped vegetables, and other components) that a cook will require for the menu items that he or she expects to prepare during his/her shift.[1] The practice is also effective in home kitchens.
 
-`Meez` will create an opinionated chef cookbook skeleton complete with testing suite. 
+`Meez` will create an opinionated chef cookbook skeleton complete with testing suite.
 
 Install
 =======
@@ -62,7 +62,7 @@ $ meez --cookbook-path /tmp --copyright Foo -I apachev2 -m foo@bah.com test
       create  /tmp/test/.gitignore
          run  git init from "/tmp/test"
       create  /tmp/test/Gemfile
-* Initializing Vagranfile
+* Initializing Vagrantfile
 * Initializing Knife
 	Append Gemfile
 * Initializing Rakefile
