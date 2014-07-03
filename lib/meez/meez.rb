@@ -98,7 +98,7 @@ class Meez
   end
 
   def self.init_vagrant(cookbook_name, options)
-    puts '* Initializing Vagranfile'
+    puts '* Initializing Vagrantfile'
     path = File.join(options[:path], cookbook_name)
     write_template('Vagrantfile.erb', path, cookbook_name, options)
   end
