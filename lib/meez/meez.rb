@@ -82,7 +82,7 @@ class Meez
       skip_vagrant: true
     ).invoke_all
     contents = File.read(File.join(path, 'Gemfile'))
-    newgemfile = contents.gsub("\ngem 'berkshelf'\n", "\ngem 'berkshelf', '> 3'\n")
+    newgemfile = contents.gsub("\ngem 'berkshelf'\n", "\ngem 'berkshelf', '>= 3.1.3'\n")
     File.open(File.join(path, 'Gemfile'), 'w') { |f| f.write(newgemfile) }
   end
 
@@ -94,7 +94,7 @@ class Meez
     Kitchen::Generator::Init.new([], {}, destination_root: path).invoke_all
     options[:driver] ||= 'vagrant'
     write_template('.kitchen.yml.erb', path, cookbook_name, options)
-    add_gem(path, 'kitchen-docker', '>=0.15.0') if options[:driver].eql? 'docker'
+    add_gem(path, 'kitchen-docker') if options[:driver].eql? 'docker'
   end
 
   def self.init_vagrant(cookbook_name, options)
@@ -111,14 +111,14 @@ class Meez
     write_template('chefspec/spec_helper.rb.erb', spec_path, cookbook_name, options)
     write_template('chefspec/default_spec.rb.erb', spec_path, cookbook_name, options)
     gitignore(path, '.coverage/*')
-    add_gem(path, 'chefspec', '>= 3.4')
+    add_gem(path, 'chefspec', '> 4')
   end
 
   def self.init_rakefile(cookbook_name, options)
     puts '* Initializing Rakefile'
     path = File.join(options[:path], cookbook_name)
     write_template('Rakefile.erb', path, cookbook_name, options)
-    add_gem(path, 'rake', '>= 10.2')
+    add_gem(path, 'rake')
   end
 
   def self.init_rubocop(cookbook_name, options)
@@ -131,7 +131,7 @@ class Meez
   def self.init_knife(cookbook_name, options)
     puts '* Initializing Knife'
     path = File.join(options[:path], cookbook_name)
-    add_gem(path, 'chef', '>= 11.8')
+    add_gem(path, 'chef', '> 11.12')
   end
 
   def self.init_foodcritic(cookbook_name, options)
@@ -147,7 +147,7 @@ class Meez
     FileUtils.mkdir_p(spec_path)
     write_template('serverspec/spec_helper.rb.erb', spec_path, cookbook_name, options)
     write_template('serverspec/default_spec.rb.erb', spec_path, cookbook_name, options)
-    add_gem(path, 'serverspec', '>= 1.6')
+    add_gem(path, 'serverspec', '2.0.0.beta16')
   end
 
   def self.init_guard(cookbook_name, options)
