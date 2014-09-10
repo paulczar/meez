@@ -15,19 +15,23 @@ Install
 
 Setting the environment variable `USE_SYSTEM_GECODE=1` will help speed up builds by using the system `gecode` rather than compiling it from scratch.
 
+You may need to install `gecode` on your system: http://www.gecode.org/download.html
+
+for OSX I did
+
+```
+$ cd $( brew --prefix )
+$ git checkout 3c5ca25 Library/Formula/gecode.rb
+$ brew install gecode
+$ brew link gecode
+```
+
 Official
 ----------
 
 as of version `0.2.0` this is offered as a `chefdk` plugin.
 
 `chef gem install meez`
-
-Unofficial
--------------
-
-Your results may vary using it outside of `chefdk`
-
-`gem install meez`
 
 
 Usage
@@ -49,36 +53,39 @@ Options
 
 ```
 $ meez --cookbook-path /tmp --copyright Foo -I apachev2 -m foo@bah.com test
+chef exec meez -o . test
 * Initializing Cookbook
 ** Creating cookbook test
 ** Creating README for cookbook: test
 ** Creating CHANGELOG for cookbook: test
 ** Creating metadata for cookbook: test
-	Rewriting metadata.rb
-	Rewriting recipes/default.rb
+  Rewriting metadata.rb
+  Rewriting recipes/default.rb
 * Initializing Berkshelf
-      create  /tmp/test/Berksfile
-      create  /tmp/test/Thorfile
-      create  /tmp/test/.gitignore
-         run  git init from "/tmp/test"
-      create  /tmp/test/Gemfile
+      create  test/Berksfile
+      create  test/Thorfile
+      create  test/chefignore
+      create  test/.gitignore
+      create  test/Gemfile
 * Initializing Vagrantfile
+  Creating ./test/Vagrantfile from template
 * Initializing Knife
-	Append Gemfile
+adding chef gem to Gemfile
 * Initializing Rakefile
-	 Creating /tmp/test/Rakefile
+  Creating ./test/Rakefile from template
+adding rake gem to Gemfile
 * Initializing Rubocop
-	Append Gemfile
+  Creating ./test/.rubocop.yml from template
+adding rubocop gem to Gemfile
 * Initializing Food Critic
-	Append Gemfile
+adding foodcritic gem to Gemfile
 * Initializing Chef Spec
-	Creating /tmp/test/test/unit/spec/spec_helper.rb
-	Creating /tmp/test/test/unit/spec/default_spec.rb
-	Append Gemfile
+  Creating ./test/test/unit/spec/spec_helper.rb from template
+  Creating ./test/test/unit/spec/default_spec.rb from template
+adding chefspec gem to Gemfile
 * Initializing Server Spec
-	 Creating /tmp/test/test/integration/default/serverspec/spec_helper.rb
-	Creating /tmp/test/test/integration/default/serverspec/default_spec.rb
-	Append Gemfile
+  Creating ./test/test/integration/default/serverspec/spec_helper.rb from template
+  Creating ./test/test/integration/default/serverspec/default_spec.rb from template
 * Initializing Test Kitchen
       create  .kitchen.yml
       append  Rakefile
@@ -89,32 +96,46 @@ $ meez --cookbook-path /tmp --copyright Foo -I apachev2 -m foo@bah.com test
       append  Gemfile
       append  Gemfile
 You must run `bundle install' to fetch any new gems.
+  Creating ./test/.kitchen.yml from template
+* Initializing Guard
+  Creating ./test/Guardfile from template
+adding guard gem to Gemfile
+adding guard-rubocop gem to Gemfile
+adding guard-foodcritic gem to Gemfile
+* Initializing Drone
+  Creating ./test/.drone.yml from template
+* Initializing Docker
+  Creating ./test/Dockerfile from template
 Cookbook test created successfully
 Next steps...
-  $ cd /tmp/test
+  $ cd ./test
   $ export USE_SYSTEM_GECODE=1
-  $ bundle install
-  $ bundle exec berks install
-
+  $ chef exec rake prepare
+  $ chef exec rake test
 $ cd /tmp/test
 $ export USE_SYSTEM_GECODE=1
-$ bundle install
-Fetching gem metadata from https://rubygems.org/
-Fetching additional metadata from https://rubygems.org/
+$ chef exec rake prepare
+chef exec bundle install --path .bundle
+Fetching gem metadata from https://rubygems.org/.......
+Fetching additional metadata from https://rubygems.org/..
 Resolving dependencies...
+Installing rake (10.3.2)
 ...
 ...
 Your bundle is complete!
-$ bundle exec berks install
-Using test (0.1.0) from metadata
-$ bundle exec rake -T
-rake integration                  # Run Test Kitchen integration tests
+It was installed into ./.bundle
+chef exec berks install
+Resolving cookbook dependencies...
+Fetching 'test' from source at .
+Fetching cookbook index from https://supermarket.getchef.com...
+Using test (0.1.0) from source at .
+$ chef exec rake -T
 rake kitchen:all                  # Run all test instances
 rake kitchen:default-ubuntu-1204  # Run default-ubuntu-1204 test instance
-rake spec                         # Run ChefSpec unit tests
+rake prepare                      # Install required Gems and Cookbooks
+rake prepare:chefdk               # Install ChefDK
 rake style                        # Run all style checks
-rake style:chef                   # Lint Chef cookbooks
-rake style:ruby                   # Run Ruby style checks
+rake unit                         # Run all unit tests
 ```
 
 Contributing

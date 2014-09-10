@@ -3,6 +3,6 @@ env:
   - CI=drone
   - USE_SYSTEM_GECODE=1
 script:
-  - bundle install
-  - bundle exec berks install
-  - bundle exec rake style spec
+  - rake prepare:chefdk
+  - chef exec rake prepare
+  - chef exec rake style unit

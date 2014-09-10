@@ -82,7 +82,7 @@ class Meez
       skip_vagrant: true
     ).invoke_all
     contents = File.read(File.join(path, 'Gemfile'))
-    newgemfile = contents.gsub("\ngem 'berkshelf'\n", "\ngem 'berkshelf', '>= 3.1.3'\n")
+    newgemfile = contents.gsub("\ngem 'berkshelf'\n", "\ngem 'berkshelf', '> 3.1'\n")
     File.open(File.join(path, 'Gemfile'), 'w') { |f| f.write(newgemfile) }
   end
 
@@ -111,7 +111,7 @@ class Meez
     write_template('chefspec/spec_helper.rb.erb', spec_path, cookbook_name, options)
     write_template('chefspec/default_spec.rb.erb', spec_path, cookbook_name, options)
     gitignore(path, '.coverage/*')
-    add_gem(path, 'chefspec', '> 4')
+    add_gem(path, 'chefspec')
   end
 
   def self.init_rakefile(cookbook_name, options)
@@ -125,19 +125,19 @@ class Meez
     puts '* Initializing Rubocop'
     path = File.join(options[:path], cookbook_name)
     write_template('.rubocop.yml.erb', path, cookbook_name, options)
-    add_gem(path, 'rubocop', '= 0.23')
+    add_gem(path, 'rubocop')
   end
 
   def self.init_knife(cookbook_name, options)
     puts '* Initializing Knife'
     path = File.join(options[:path], cookbook_name)
-    add_gem(path, 'chef', '> 11.12')
+    add_gem(path, 'chef', '> 11')
   end
 
   def self.init_foodcritic(cookbook_name, options)
     puts '* Initializing Food Critic'
     path = File.join(options[:path], cookbook_name)
-    add_gem(path, 'foodcritic', '>= 3.0')
+    add_gem(path, 'foodcritic')
   end
 
   def self.init_serverspec(cookbook_name, options)
@@ -147,7 +147,6 @@ class Meez
     FileUtils.mkdir_p(spec_path)
     write_template('serverspec/spec_helper.rb.erb', spec_path, cookbook_name, options)
     write_template('serverspec/default_spec.rb.erb', spec_path, cookbook_name, options)
-    add_gem(path, 'serverspec', '2.0.0.beta16')
   end
 
   def self.init_guard(cookbook_name, options)

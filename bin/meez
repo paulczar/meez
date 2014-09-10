@@ -11,7 +11,7 @@ options = {
 }
 
 opt_parser = OptionParser.new do |opt|
-  opt.banner = 'Usage: meez [options] <cookbook name>'
+  opt.banner = 'Usage: chef exec meez [options] <cookbook name>'
   opt.separator ''
   opt.separator 'Options'
   opt.on('-o', '--cookbook-path PATH', 'The directory where the cookbook will be created') do |path|
@@ -35,7 +35,7 @@ opt_parser = OptionParser.new do |opt|
   end
   opt.on('-v', '--version', 'version') do
     options[:version] = true
-    puts 'meez version 0.2.2'
+    puts 'meez version 0.2.7'
   end
 end
 
@@ -50,9 +50,8 @@ unless options[:help] || options[:version]
     puts 'Next steps...'
     puts "  $ cd #{File.join(options[:path], cookbook_name)}"
     puts '  $ export USE_SYSTEM_GECODE=1'
-    puts '  $ bundle install'
-    puts '  $ bundle exec berks install'
-    puts '  $ bundle exec rake'
+    puts '  $ chef exec rake prepare'
+    puts '  $ chef exec rake test'
   else
     puts 'Need to specify a cookbook'
     puts opt_parser
