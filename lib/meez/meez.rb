@@ -53,8 +53,8 @@ class Meez
     create_cookbook.name_args = [cookbook_name]
     create_cookbook.config[:cookbook_path]      = options[:path]
     create_cookbook.config[:cookbook_copyright] = options[:copyright] || 'YOUR_COMPANY_NAME'
-    create_cookbook.config[:cookbook_license]   = options[:license]   || 'YOUR_EMAIL'
-    create_cookbook.config[:cookbook_email]     = options[:email]     || 'none'
+    create_cookbook.config[:cookbook_email]     = options[:email]     || 'YOUR_EMAIL'
+    create_cookbook.config[:cookbook_license]   = options[:license]   || 'none'
     create_cookbook.run
     %w(metadata.rb recipes/default.rb).each do |file|
       puts "\tRewriting #{file}"
