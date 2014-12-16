@@ -13,7 +13,7 @@ Vagrant.configure('2') do |config|
     }
 
     chef.run_list = [
-        'recipe[<%= cookbook_name %>::default]'
+      'recipe[<%= cookbook_name %>::default]'
     ]
   end
 end
